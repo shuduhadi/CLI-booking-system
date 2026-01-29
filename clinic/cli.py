@@ -2,6 +2,7 @@ import argparse
 from clinic.calendar_api import fetch_next_7_days
 from clinic.data_manager import load_cache, save_cache, cache_is_fresh
 from clinic.display import display_events
+from clinic.slot_normalizer import normalize_events
 
 def view_calendars():
     cache = load_cache()
@@ -15,18 +16,29 @@ def view_calendars():
 
     display_events(events)
 
+def view_slots_debug():
+    events = fetch_next_7_days()
+    slots = normalize_events(events, "student")
+
+    for slot in slots:
+        print(
+            f"{slot['date']} | {slot['start']}–{slot['end']} | {slot['calendar']} | {slot['status']}"
+        )
+
 def main():
     parser = argparse.ArgumentParser(
         description="Clinic Booking System"
     )
     parser.add_argument(
         'command',
-        choices=['view'],
+        choices=['view','slots'],
         help='Command to run'
     )
     args = parser.parse_args()
     if args.command == 'view':
         view_calendars()
+    elif args.command == 'slots':
+        view_slots_debug()
 
 if __name__ == '__main__':
     main()
