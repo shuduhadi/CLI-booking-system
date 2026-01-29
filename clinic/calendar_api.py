@@ -6,12 +6,8 @@ from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
+from clinic.config import SCOPES, TOKEN_FILE, CREDENTIALS_FILE, DAYS_AHEAD
 
-# If modifying these scopes, delete the file token.json.
-SCOPES = ["https://www.googleapis.com/auth/calendar.readonly"]
-
-TOKEN_FILE = 'token.json'
-CREDENTIALS_FILE = 'secrets/credentials.json'
 
 def get_credentials():
     creds = None
@@ -46,7 +42,7 @@ def fetch_next_7_days(calendar_id='primary'):
         tz=datetime.timezone.utc
     )
 
-    end = now + datetime.timedelta(days=7)
+    end = now + datetime.timedelta(days=DAYS_AHEAD)
     try:
         events_results = (
             service.events()

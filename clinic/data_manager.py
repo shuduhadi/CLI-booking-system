@@ -1,27 +1,36 @@
 import json
-import os
 import datetime
+from pathlib import Path
 
-DATA_FILE = 'calendar_cache.json'
+from clinic.config import CACHE_FILE, CACHE_TTL_SECONDS
+
 
 def load_cache():
-    if not os.path.exists(DATA_FILE):
+    cache_path = Path(CACHE_FILE)
+
+    if not cache_path.exists():
         return None
-    
-    with open(DATA_FILE, 'r') as file:
-        return json.load(file)
-    
-def save_cache(events):
-    data = {
-        'last_updated': datetime.datetime.now(
+
+    with open(cache_path, "r") as f:
+        return json.load(f)
+
+
+def save_cache(student_events, clinic_events):
+    cache_data = {
+        "last_updated": datetime.datetime.now(
             tz=datetime.timezone.utc
         ).isoformat(),
-        'events': events,
+        "student": student_events,
+        "clinic": clinic_events,
     }
-    with open(DATA_FILE, 'w') as file:
-        json.dump(data, file, indent=2)
+    with open(CACHE_FILE, "w") as f:
+        json.dump(cache_data, f, indent=2)
+
 
 def cache_is_fresh(cache_data):
-    last_updated = datetime.datetime.fromisoformat(cache_data['last_updated'])
+    last_updated = datetime.datetime.fromisoformat(
+        cache_data["last_updated"]
+    )
     now = datetime.datetime.now(tz=datetime.timezone.utc)
-    return last_updated.date() == now.date()
+    age = now - last_updated
+    return age.total_seconds() < CACHE_TTL_SECONDS
