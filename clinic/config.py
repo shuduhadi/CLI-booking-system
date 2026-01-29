@@ -5,8 +5,7 @@ Central configuration for the clinic booking system.
 STUDENT_CALENDAR_ID = 'primary'
 
 CLINIC_CALENDAR_ID = (
-    "bec7fee45ddb51ae1553c1837129802fcfe10198035691130a9808979924f494"
-    "@group.calendar.google.com"
+    "c_2b0ada51d2c238b141655269e3f369b9897d3b1b654191e53db0e5bf4e3631f9@group.calendar.google.com"
 )
 
 SCOPES = ["https://www.googleapis.com/auth/calendar.readonly"]

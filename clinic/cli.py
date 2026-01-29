@@ -27,13 +27,14 @@ def view_calendars():
 
 
 def view_slots():
-    events = fetch_next_7_days()
-    slots = normalize_events(events, "student")
+    student = fetch_next_7_days(STUDENT_CALENDAR_ID)
+    clinic = fetch_next_7_days(CLINIC_CALENDAR_ID)
+    slots = normalize_events(student, clinic)
 
     for slot in slots:
         print(
-            f"{slot['date']} | {slot['start']}–{slot['end']} | {slot['calendar']} | {slot['status']}"
-        )
+    f"{slot['date']} | {slot['start']}–{slot['end']} | {slot['status']}"
+)
 
 def main():
     parser = argparse.ArgumentParser(
