@@ -1,5 +1,6 @@
 import datetime
 from clinic.config import SLOT_MINS
+from clinic.volunteer import is_volunteer_available
 
 SLOT_LENGTH = datetime.timedelta(minutes=SLOT_MINS)
 
@@ -43,7 +44,13 @@ def normalize_events(student_events, clinic_events):
 
     result = []
     for slot in slots.values():
-        if slot["student_busy"] and slot["clinic_busy"]:
+        if not is_volunteer_available(
+            slot["date"],
+            slot['start'],
+            slot["end"]
+        ):
+            slot["status"] = "no_volunteer"
+        elif slot["student_busy"] and slot["clinic_busy"]:
             slot["status"] = "blocked"
         elif slot["student_busy"]:
             slot["status"] = "student_busy"
@@ -51,7 +58,6 @@ def normalize_events(student_events, clinic_events):
             slot["status"] = "clinic_busy"
         else:
             slot["status"] = "free"
-
         result.append(slot)
 
     return sorted(result, key=lambda s: (s["date"], s["start"]))
